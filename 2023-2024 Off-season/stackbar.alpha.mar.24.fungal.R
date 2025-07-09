@@ -1,7 +1,6 @@
 library(tidyverse)
 library(readxl)
 library(ggtext)
-library(RColorBrewer)
 library(MoMAColors)
 library(glue)
 library(dplyr)
@@ -56,7 +55,7 @@ family_rel_abund <- otu_rel_abund %>%
          taxon = str_replace(taxon,
                              "unclassified_(.*)", "Unclassified \\1"),
          taxon = str_replace_all(taxon, 
-                                 "_", " ")) #gets ride of _ in taxon names
+                                 "_", " "))
 
 family_rel_abund_mean <- otu_rel_abund %>%
   filter(level=="family") %>%
@@ -80,7 +79,7 @@ family_pool <- family_rel_abund %>%
 
 family_pool_mean <- family_rel_abund_mean %>%
   group_by(taxon) %>%
-  summarize(pool = max(mean_rel_abund) < 1, #less than 1% - this is not in decimal percentage because with the means I multiplied by 100
+  summarize(pool = max(mean_rel_abund) < 1,
             mean = mean(mean_rel_abund),
             .groups="drop")
 
@@ -92,7 +91,7 @@ inner_join(family_rel_abund, family_pool, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=sample, y=rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Families",
@@ -102,8 +101,7 @@ inner_join(family_rel_abund, family_pool, by="taxon") %>%
                     labels=c("Trichocomaceae", "Pleosporaceae", "Pleosporales family Incertae sedis", "Sordariaceae", "Unclassified Fungi", "Unclassified Ascomycota", "Botryosphaeriaceae",
                              "Hypocreaceae", "Chaetomiaceae", "Lasiosphaeriaceae", "Ascomycota family Incertae sedis", "Unclassified Sordariomycetes", "Sporormiaceae", 
                              "Unclassified Sordariales", "Unclassified Onygenales", "Unclassified Dothideomycetes", "Nectriaceae", "Other"),
-                    #values = c(brewer.pal(12, "Paired"), "navyblue", "dimgrey")) +
-                    values = c(moma.colors("Warhol", 17, direction=1, type="continuous"), "dimgrey")) + #type could be continuous
+                    values = c(moma.colors("Warhol", 17, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("BFO1A1F", "BFO1A2F", "BFO1B1F", "BFO1B2F", "BFO2A1F", "BFO2A2F", "BFO2B1F", "BFO2B2F", "BFO3A1F", "BFO3A2F", "BFO3B1F", "BFO3B2F",
                             "BFO1C1F", "BFO1C2F", "BFO2C1F", "BFO2C2F", "BFO3C1F", "BFO3C2F",
                             "BFOBA1F", "BFOBA2F", "BFOBB1F", "BFOBB2F",
@@ -133,7 +131,6 @@ inner_join(family_rel_abund, family_pool, by="taxon") %>%
         plot.caption = element_text(hjust=1.14, size=8),
         plot.title = element_text(hjust=0.5))
 
-
 order_rel_abund <- otu_rel_abund %>%
   filter(level=="order") %>%
   group_by(location, sample, taxon) %>%
@@ -145,7 +142,7 @@ order_rel_abund <- otu_rel_abund %>%
          taxon = str_replace(taxon,
                              "unclassified_(.*)", "Unclassified \\1"),
          taxon = str_replace_all(taxon, 
-                                 "_", " ")) #gets ride of _ in taxon names
+                                 "_", " "))
 
 order_rel_abund_mean <- otu_rel_abund %>%
   filter(level=="order") %>%
@@ -163,13 +160,13 @@ order_rel_abund_mean <- otu_rel_abund %>%
 
 order_pool <- order_rel_abund %>%
   group_by(taxon) %>%
-  summarize(pool = max(rel_abund) < 0.04, #less than 4%
+  summarize(pool = max(rel_abund) < 0.04,
             mean = mean(rel_abund),
             .groups="drop")
 
 order_pool_mean <- order_rel_abund_mean %>%
   group_by(taxon) %>%
-  summarize(pool = max(mean_rel_abund) < 1, #less than 1% - this is not in decimal percentage because with the means I multiplied by 100
+  summarize(pool = max(mean_rel_abund) < 1,
             mean = mean(mean_rel_abund),
             .groups="drop")
 
@@ -182,7 +179,7 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=sample, y=rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Orders",
@@ -192,8 +189,7 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
                     labels=c("Eurotiales", "Pleosporales", "Sordariales", "Unclassified Fungi", "Unclassified Ascomycota", "Botryosphaeriales",
                              "Ascomycota order Incertae sedis", "Unclassified Sordariomycetes", "Xylariales", "Onygenales", "Unclassified Dothideomycetes",
                              "Hypocreales", "Other"),
-                    #values = c(brewer.pal(12, "Paired"), "navyblue", "dimgrey")) +
-                    values = c(moma.colors("Klein", 12, direction=1, type="continuous"), "dimgrey")) + #type could be continuous
+                    values = c(moma.colors("Klein", 12, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("BFO1A1F", "BFO1A2F", "BFO1B1F", "BFO1B2F", "BFO2A1F", "BFO2A2F", "BFO2B1F", "BFO2B2F", "BFO3A1F", "BFO3A2F", "BFO3B1F", "BFO3B2F",
                             "BFO1C1F", "BFO1C2F", "BFO2C1F", "BFO2C2F", "BFO3C1F", "BFO3C2F",
                             "BFOBA1F", "BFOBA2F", "BFOBB1F", "BFOBB2F",
@@ -214,14 +210,12 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
   labs(x=NULL,
        y="Relative Abundance (%)",
        title="Order-level Fungal Alpha Diversity: **2023-2024 Off-season**") +
-  #labs(caption = "Other = relative abundance < 4%") +
   theme_classic() +
   theme(axis.text.x = element_markdown(),
         legend.text = element_markdown(),
         legend.title = element_text(size=10),
         legend.key.size = unit(10, "pt"),
         legend.position = "bottom",
-        #plot.caption = element_text(hjust=0.8, size=8),
         plot.title = element_markdown(hjust=0.5))
 
 ggsave("order.stackedbar.ITS.png", width=18, height=8)
@@ -235,7 +229,7 @@ inner_join(order_rel_abund_mean, order_pool_mean, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=combo, y=mean_rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Orders",
@@ -245,7 +239,6 @@ inner_join(order_rel_abund_mean, order_pool_mean, by="taxon") %>%
                     labels=c("**Eurotiales (S)***", "Pleosporales", "**Sordariales (S)***", "Unclassified Fungi", "**Unclassified Ascomycota (BF)***", "Botryosphaeriales",
                              "Ascomycota order Incertae sedis", "**Unclassified Sordariomycetes (S)***", "**Xylariales (S)***", "**Onygenales (BF)***", "Unclassified Dothideomycetes",
                              "**Hypocreales (BF)***", "Other"),
-                    #values = c(brewer.pal(12, "Paired"), "navyblue", "dimgrey")) +
                     values = c(moma.colors("Warhol", 12, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"),
                    labels=c("Bottom Farm<br>Live (n=12)", "Bottom Farm<br>Heat-killed<br>(n=6)", "Bottom Farm<br>Bulk (n=4)",
@@ -275,7 +268,7 @@ class_rel_abund <- otu_rel_abund %>%
   mutate(taxon = str_replace(taxon,
                              "(.*)_unclassified", "Unclassified \\1"),
          taxon = str_replace_all(taxon, 
-                                 "_", " ")) #gets ride of _ in taxon names
+                                 "_", " "))
 
 class_rel_abund_mean <- otu_rel_abund %>%
   filter(level=="class") %>%
@@ -297,7 +290,7 @@ class_pool <- class_rel_abund %>%
 
 class_pool_mean <- class_rel_abund_mean %>%
   group_by(taxon) %>%
-  summarize(pool = max(mean_rel_abund) < 1, #less than 1% - this is not in decimal percentage because with the means I multiplied by 100
+  summarize(pool = max(mean_rel_abund) < 1,
             mean = mean(mean_rel_abund),
             .groups="drop")
 
@@ -310,7 +303,7 @@ inner_join(class_rel_abund, class_pool, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=sample, y=rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Classes",
@@ -320,8 +313,7 @@ inner_join(class_rel_abund, class_pool, by="taxon") %>%
                     labels=c("Thermoleophilia", "Actinobacteria", "Unclassified Bacteria", "Bacilli", "Acidobacteria Gp6", "Rubrobacteria",
                              "Deltaproteobacteria", "Unclassified Actinomycetota", "Betaproteobacteria", "Acidimicrobiia", "Gammaproteobacteria",
                              "Gemmatimonadia", "Acidobacteria Gp16", "Chitinophagia", "Acidobacteria Gp4", "Alphaproteobacteria", "Other"),
-                    #values = c(brewer.pal(12, "Paired"), "navyblue", "dimgrey")) +
-                    values = c(moma.colors("Warhol", 16, direction=1, type="continuous"), "dimgrey")) + #type could be continuous
+                    values = c(moma.colors("Warhol", 16, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("BFO1A1B", "BFO1A2B", "BFO1B1B", "BFO1B2B", "BFO2A1B", "BFO2A2B", "BFO2B1B", "BFO2B2B", "BFO3A1B", "BFO3A2B", "BFO3B1B", "BFO3B2B",
                             "BFO1C1B", "BFO1C2B", "BFO2C1B", "BFO2C2B", "BFO3C1B", "BFO3C2B",
                             "BFOBA1B", "BFOBA2B", "BFOBB1B", "BFOBB2B",
@@ -362,7 +354,7 @@ inner_join(class_rel_abund_mean, class_pool_mean, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=combo, y=mean_rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Classes",
@@ -372,8 +364,7 @@ inner_join(class_rel_abund_mean, class_pool_mean, by="taxon") %>%
                     labels=c("Alphaproteobacteria", "Actinobacteria", "Unclassified Bacteria", "Bacilli", "Acidobacteria Gp6", "Rubrobacteria",
                              "Unclassified Actinomycetota", "Deltaproteobacteria", "Betaproteobacteria", "Acidimicrobiia", "Gemmatimonadia",
                              "Gammaproteobacteria", "Acidobacteria Gp16", "Chitinophagia", "Acidobacteria Gp4", "Thermoleophilia", "Other"),
-                    #values = c(brewer.pal(12, "Paired"), "navyblue", "dimgrey")) +
-                    values = c(moma.colors("Warhol", 16, direction=1, type="continuous"), "dimgrey")) + #type could be continuous
+                    values = c(moma.colors("Warhol", 16, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"),
                    labels=c("Bottom Farm<br>Live (n=12)", "Bottom Farm<br>Heat-killed<br>(n=6)", "Bottom Farm<br>Bulk (n=4)",
                             "Stiles Farm<br>Live (n=12)", "Stiles Farm<br>Heat-killed<br>(n=6)", "Stiles Farm<br>Bulk (n=4)")) +
