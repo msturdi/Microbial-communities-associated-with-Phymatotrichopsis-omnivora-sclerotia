@@ -1,7 +1,6 @@
 library(tidyverse)
 library(readxl)
 library(ggtext)
-library(RColorBrewer)
 library(MoMAColors)
 library(glue)
 library(dplyr)
@@ -100,10 +99,7 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
                              "Sordariomycetes order Incertae sedis", "Unclassified Fungi", "Botryosphaeriales", "Unclassified Sordariomycetes", "Eurotiales", "Other"),
                     labels=c("Hypocreales", "Pleosporales", "Sordariales", "Unclassified Ascomycota", "Ascomycota order Incertae sedis", "Capnodiales", 
                              "Sordariomycetes order Incertae sedis", "Unclassified Fungi", "Botryosphaeriales", "Unclassified Sordariomycetes", "Eurotiales", "Other"),
-                    #labels=c("**Hypocreales (BF)***", "**Pleosporales (BF)***", "Sordariales", "**Unclassified Ascomycota (BF)***", "**Ascomycota order Incertae sedis (BF)***", 
-                             #"Capnodiales", "**Sordariomycetes order Incertae sedis (BF)***", "Unclassified Fungi", "Botryosphaeriales", "**Unclassified Sordariomycetes (SF)***", 
-                             #"**Eurotiales (SF)***", "Other"),
-                    values = c(moma.colors("Klein", 11, direction=1, type="continuous"), "dimgrey")) + #type could be continuous
+                    values = c(moma.colors("Klein", 11, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("BI1A1F", "BI1A2F", "BI1B1F", "BI1B2F", "BI2A1F", "BI2A2F", "BI2B1F", "BI2B2F", "BI3A1F", "BI3A2F", "BI3B1F", "BI3B2F",
                             "BI1C1F", "BI1C2F", "BI2C1F", "BI2C2F", "BI3C1F", "BI3C2F",
                             "BIBA1F", "BIBA2F", "BIBB1F", "BIBB2F",
@@ -124,53 +120,12 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
   labs(x=NULL,
        y="Relative Abundance (%)",
        title="Order-level Fungal Alpha Diversity: **2024 Cotton-growing season**") +
-  #labs(caption = "Other = relative abundance < 3%") +
   theme_classic() +
   theme(axis.text.x = element_markdown(),
         legend.text = element_markdown(),
         legend.title = element_text(size=10),
         legend.key.size = unit(10, "pt"),
         legend.position = "bottom",
-        #plot.caption = element_text(hjust=0.8, size=8),
         plot.title = element_markdown(hjust=0.5))
 
 ggsave("order.stackedbar.ITS.png", width=18, height=8)
-
-#order-level averages
-inner_join(order_rel_abund_mean, order_pool_mean, by="taxon") %>%
-  mutate(taxon = if_else(pool, "Other", taxon)) %>%
-  group_by(combo, taxon) %>%
-  summarize(mean_rel_abund = sum(mean_rel_abund), 
-            mean = min(mean),
-            .groups="drop") %>%
-  mutate(taxon = factor(taxon),
-         taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
-  ggplot(aes(x=combo, y=mean_rel_abund, fill=taxon)) +
-  geom_col() +
-  scale_fill_manual(name="Orders",
-                    breaks=c("Hypocreales", "Pleosporales", "Sordariales", "Unclassified Ascomycota", "Capnodiales", "Ascomycota order Incertae sedis", 
-                             "Sordariomycetes order Incertae sedis", "Unclassified Fungi", "Botryosphaeriales", "Unclassified Sordariomycetes", "Eurotiales", "Other"),
-                    labels=c("**Hypocreales (BF)***", "**Pleosporales (BF)***", "Sordariales", "**Unclassified Ascomycota (BF)***", "Capnodiales", 
-                             "**Ascomycota order Incertae sedis (BF)***", "**Sordariomycetes order Incertae sedis (BF)***", "Unclassified Fungi", "Botryosphaeriales", 
-                             "**Unclassified Sordariomycetes (SF)***", "**Eurotiales (SF)***", "Other"),
-                    #values = c(brewer.pal(12, "Paired"), "navyblue", "dimgrey")) +
-                    values = c(moma.colors("Warhol", 11, direction=1, type="continuous"), "dimgrey")) + #type could be continuous
-  scale_x_discrete(limits=c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"),
-                   labels=c("Bottom Farm<br>Live (n=12)", "Bottom Farm<br>Heat-killed<br>(n=6)", "Bottom Farm<br>Bulk (n=4)",
-                            "Stiles Farm<br>Live (n=12)", "Stiles Farm<br>Heat-killed<br>(n=6)", "Stiles Farm<br>Bulk (n=4)")) +
-  scale_y_continuous(expand=c(0,0)) + #this makes the bars touch the y axis
-  labs(x=NULL,
-       y="Average Relative Abundance (%)",
-       title="Order-level Fungal Alpha Diversity") +
-  labs(caption = "Other = relative abundance < 1%") +
-  theme_classic() +
-  theme(axis.text.x = element_markdown(),
-        legend.text = element_markdown(),
-        legend.title = element_text(size=10),
-        legend.key.size = unit(10, "pt"),
-        legend.position = "bottom",
-        plot.caption = element_text(hjust=0.95, size=8),
-        plot.title = element_text(hjust=0.5))
-
-ggsave("order.stackedbar.ITS.ave.png", width=12, height=8)
