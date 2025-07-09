@@ -77,10 +77,6 @@ shannon_summary_location <- meta_alpha %>%
             N = n(),
             .groups = "drop")
 
-#a way to make a bar plot with error bars without needing to have preceding summary steps
-#stat_summary(fun.data = mean_se, geom="errorbar", width=0.5) +
-#stat_summary(fun.data = mean_se, geom="bar", show.legend = FALSE)
-
 #just location Shannon
 location_shannon <- meta_alpha %>%
   ggplot(aes(x=location, y=shannon, color=location)) +
