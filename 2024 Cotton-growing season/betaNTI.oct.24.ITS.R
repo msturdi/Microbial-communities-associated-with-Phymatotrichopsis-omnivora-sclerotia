@@ -6,32 +6,10 @@ library(microeco)
 library(tidyverse)
 library(glue)
 library(file2meco)
-library(MoMAColors)
 library(ggtext)
 library(dplyr)
 
 set.seed(19980609)
-
-display.all.moma(6, colorblind_only=T)
-
-##
-#filtering out single otus in shared file
-##
-#shared <- read_tsv("final.opti_mcc.0.03.subsample.oct.24.fungal.shared",
-                   #col_types = cols(Group = col_character(),
-                                    #.default = col_double()))
-
-#meta_cols <- c("label", "Group", "numOtus") #define columns to keep from shared file
-#otu_sums <- colSums(shared[, !(names(shared) %in% meta_cols)]) #sum otu abundances across all samples
-#otus_to_keep <- names(otu_sums[otu_sums > 1]) #keep otus with total counts above 1
-
-#shared_filtered <- shared %>%
-  #select(all_of(meta_cols), all_of(otus_to_keep))
-
-#otu_count <- shared_filtered %>%
-  #select(Group, starts_with("Otu")) %>%
-  #rename(sample = Group) %>%
-  #column_to_rownames(var = "sample")
 
 otu_count <- read_tsv("final.opti_mcc.0.03.subsample.oct.24.fungal.shared") %>%
   select(Group, starts_with("Otu")) %>%
@@ -108,7 +86,6 @@ TAX = tax_table(taxmat)
 physeq = phyloseq(OTU, TAX, sampledata)
 physeq
 
-#tree <- read_tree("final.phylip.oct.24.fungal.tre") #ran into issue here with tip labels in tree not matching the OTU labels in the other objects
 tree <- read_tree("final.opti_mcc.0.03.rep.phylip.oct.24.tre") #representative tree make using get.oturep in mothur
 
 tree_taxa <- tree$tip.label #get current tree tip labels
@@ -120,14 +97,9 @@ physeq
 
 meco_dataset <- phyloseq2meco(physeq)
 
-##
-#Code from Vanessa to filter out very low abundance OTUs
-##
 meco_dataset$filter_taxa(rel_abund = 0.00001, freq = 0.1)
 meco_dataset
 
-#allow you to calculate beta NTI and other phylogenetic metrics. Use a threshold to filter low-abundance taxa if needed.
-#beta:method = "CSS" (Cumulative Sum Scaling)
 dt <- trans_norm$new(meco_dataset)
 dt2 <- dt$norm(method = "CSS")
 
@@ -156,14 +128,7 @@ t2$res_group_distance$Process #NULL means done
 t2$sample_table$combo <- factor(t2$sample_table$combo, 
                                    levels = c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"))
 
-#for treatment
-#t2$sample_table$treatment <- factor(t2$sample_table$treatment, 
-                                #levels = c("live", "dead", "none"))
-
-##
-#make CSV file so that you don't have to run the 999 step again
-##
-g1 <- t2$plot_group_distance(boxplot_add = "mean") #in g1 figure, above -1 is stochastic and below is deterministic
+g1 <- t2$plot_group_distance(boxplot_add = "mean")
 
 plot_data <- g1$data
 
@@ -179,78 +144,3 @@ beta_NTI_ave <- read.csv("group.distance.oct.24.ITS.csv") %>%
             min = mean-se,
             N = n(),
             .groups = "drop")
-
-g2 = g1 +
-  scale_color_manual(name=NULL,
-                     breaks=c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"),
-                     labels=c("BF live<br>sclerotia", "BF heat-killed<br>sclerotia", "BF bulk", 
-                              "SF live<br>sclerotia", "SF heat-killed<br>sclerotia", "SF bulk"),
-                     values = c(moma.colors("Sidhu", 6, direction=1, type="discrete"))) +
-  scale_x_discrete(limits=c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"),
-                   labels=c("BF live<br>sclerotia", "BF heat-killed<br>sclerotia", "BF bulk", 
-                            "SF live<br>sclerotia", "SF heat-killed<br>sclerotia", "SF bulk")) +
-  labs(x=NULL,
-       y="betaNTI",
-       title="Stochastic or Deterministic Selection<br>In-season 2024 **Fungal**") +
-  theme_classic() +
-  theme(axis.text.x = element_markdown(size = 14, color = "black"),
-        axis.text.y = element_markdown(size = 12),
-        axis.title.y = element_markdown(size = 14),
-        legend.position = "none",
-        plot.title = element_markdown(hjust=0.5, size = 16))
-
-ggsave("betaNTI.oct24.ITS.png", width=12, height=8)
-
-##
-#from Vanessa's code, but doesn't seem to take into account the -2 threshold
-##
-#t2$res_group_distance$Process <- ifelse(
-  #abs(t2$res_group_distance$Value) > 2.0, "Deterministic", "Stochastic")
-
-t2$res_group_distance$Process <- ifelse(t2$res_group_distance$Value > 2.0 | t2$res_group_distance$Value < -2.0, 
-                                        "Deterministic", "Stochastic")
-
-proportions <- t2$res_group_distance %>%
-  group_by(combo, Process) %>%
-  summarize(Count = n()) %>%
-  mutate(Proportion = Count*100 / sum(Count)) %>%
-  arrange(combo, Process)
-  
-proportions$combo <- factor(proportions$combo, 
-                               levels = c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"))
-
-proportions %>%
-  ggplot(aes(x = combo, y = Proportion, fill = Process)) +
-  geom_col() +
-  scale_fill_manual(name="Selection Type",
-                    breaks=c("Deterministic", "Stochastic"),
-                    values=c('cadetblue3','coral2'),
-                    labels=c("Deterministic", "Stochastic")) +
-  scale_x_discrete(limits=c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"),
-                   labels=c("BF live<br>sclerotia", "BF heat-killed<br>sclerotia", "BF bulk", 
-                            "SF live<br>sclerotia", "SF heat-killed<br>sclerotia", "SF bulk")) +
-  scale_y_continuous(expand=c(0,0)) +
-  labs(x=NULL,
-       y="Stochastic vs. Deterministic Selection",
-       title="Proportion of Stochastic vs. Deterministic Selection<br>In-season 2024 **Fungal**") +
-  theme_classic() +
-  theme(axis.text.x = element_markdown(size = 14, color = "black"),
-        axis.text.y = element_markdown(size = 10),
-        axis.title.y = element_markdown(size = 14),
-        legend.position = "bottom",
-        legend.text = element_markdown(size = 10),
-        legend.title = element_text(size=11),
-        legend.key.size = unit(10, "pt"),
-        plot.title = element_markdown(hjust=0.5, size = 16))
-
-ggsave("porportion.selection.oct24.ITS.png", width=12, height=8)
-
-##
-#percentage-based analysis
-##
-percent <- t2$res_group_distance %>%
-  group_by(combo, Process) %>%
-  summarize(Count = n(),
-            .groups = "drop") %>%
-  mutate(Percentage = Count / sum(Count) *100) %>% #convert to percentages
-  arrange(combo, Process)
