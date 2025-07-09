@@ -21,7 +21,6 @@ meta_alpha %>%
   unnest(cols=summary_data) %>%
   select(-data)
 
-#a way to test if the data are normally distributed, if it is, the points should all fall on a line
 ggplot(meta_alpha, aes(
   sample=shannon,
   #sample=invsimpson,
@@ -33,15 +32,15 @@ meta_alpha <- mutate(meta_alpha,
                      #scaled_invsimpson=invsimpson^3
 )
 
-meta_alpha %>% pull(shannon) %>% shapiro.test() #just barely normal
-meta_alpha %>% pull(scaled_shannon) %>% shapiro.test() #comfortable normal
+meta_alpha %>% pull(shannon) %>% shapiro.test()
+meta_alpha %>% pull(scaled_shannon) %>% shapiro.test()
 
 meta_alpha %>% pull(invsimpson) %>% shapiro.test() 
 
 #assessing sig. of scaled Shannon
 trt_shannon_aov <- aov(scaled_shannon~trt, data=meta_alpha)
 summary(trt_shannon_aov)
-TukeyHSD(trt_shannon_aov) #run if experimental-wide p-value<0.05
+TukeyHSD(trt_shannon_aov)
 
 #assessing sig. of raw Shannon values
 kruskal.test(shannon~trt, data=meta_alpha)
@@ -50,7 +49,7 @@ pairwise.wilcox.test(g=meta_alpha$trt, x=meta_alpha$shannon, p.adjust.method="BH
 #assessing sig. of invsimpson values
 trt_invsimpson_aov <- aov(invsimpson~trt, data=meta_alpha)
 summary(trt_invsimpson_aov)
-TukeyHSD(trt_invsimpson_aov) #run if experimental-wide p-value<0.05
+TukeyHSD(trt_invsimpson_aov)
 
 shannon_summary <- meta_alpha %>%
   group_by(trt) %>%
@@ -69,10 +68,6 @@ invsimpson_summary <- meta_alpha %>%
             min = mean-se,
             N = n(),
             .groups = "drop")
-
-#a way to make a bar plot with error bars without needing to have preceeding summary steps
-#stat_summary(fun.data = mean_se, geom="errorbar", width=0.5) +
-#stat_summary(fun.data = mean_se, geom="bar", show.legend = FALSE)
 
 meta_alpha %>%
   ggplot(aes(x=trt, y=shannon, color=trt, fill=trt)) +
