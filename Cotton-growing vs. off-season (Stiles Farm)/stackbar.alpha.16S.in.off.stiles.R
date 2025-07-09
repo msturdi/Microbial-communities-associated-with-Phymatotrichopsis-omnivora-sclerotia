@@ -1,7 +1,6 @@
 library(tidyverse)
 library(readxl)
 library(ggtext)
-library(RColorBrewer)
 library(MoMAColors)
 library(glue)
 library(dplyr)
@@ -82,7 +81,7 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=sample, y=rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Orders",
@@ -94,12 +93,7 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
                              "Unclassified Actinomycetota", "Gemmatimonadales", "Micromonosporales", "Propionibacteriales", "Acidimicrobiales", "Micrococcales", "Unclassified Actinobacteria",
                              "Unclassified Thermoleophilia", "Myxococcales", "Sphingomonadales", "Burkholderiales", "Geodermatophilales", "Acidobacteria Gp16 incertae sedis",
                              "Streptomycetales", "Pseudonocardiales", "Unclassified Bacteria", "Other"),
-                    #labels=c("**Caryophanales (In)***", "**Gaiellales (Off)***", "Rubrobacterales", "**Hyphomicrobiales (Off)***", "Solirubrobacterales", 
-                             #"**Acidobacteria Gp6 incertae sedis (Off)***", "Rhodospirillales", "**Unclassified Actinomycetota (In)***", "**Gemmatimonadales (In)***", "Micromonosporales", 
-                             #"Propionibacteriales", "Acidimicrobiales", "Micrococcales", "Unclassified Actinobacteria", "Unclassified Thermoleophilia", "Myxococcales", 
-                             #"**Sphingomonadales (Off)***", "**Burkholderiales (Off)***", "Geodermatophilales", "Acidobacteria Gp16 incertae sedis", "**Streptomycetales (In)***", 
-                             #"**Pseudonocardiales (In)***", "**Unclassified Bacteria (In)***", "Other"),
-                    values = c(moma.colors("Warhol", 23, direction=1, type="continuous"), "dimgrey")) + #type could be continuous
+                    values = c(moma.colors("Warhol", 23, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("SI1A1B", "SI1A2B", "SI1B1B", "SI1B2B", "SI2A1B", "SI2A2B", "SI2B1B", "SI2B2B", "SI3A1B", "SI3A2B", "SI3B1B", "SI3B2B",
                             "SI1C1B", "SI1C2B", "SI2C1B", "SI2C2B", "SI3C1B", "SI3C2B",
                             "SIBA1B", "SIBA2B", "SIBB1B", "SIBB2B",
@@ -120,14 +114,12 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
   labs(x=NULL,
        y="Relative Abundance (%)",
        title="Order-level Bacterial Alpha Diversity: Off-season vs. 2024 Cotton-growing Season<br>**Stiles Farm**") +
-  #labs(caption = "Other = relative abundance < 2%") +
   theme_classic() +
   theme(axis.text.x = element_markdown(),
         legend.text = element_markdown(),
         legend.title = element_text(size=10),
         legend.key.size = unit(10, "pt"),
         legend.position = "bottom",
-        #plot.caption = element_text(hjust=0.8, size=8),
         plot.title = element_markdown(hjust=0.5))
 
 ggsave("order.stackedbar.16S.in.off.stiles.png", width=22, height=9)
@@ -141,7 +133,7 @@ inner_join(order_rel_abund_mean, order_pool_mean, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=combo, y=mean_rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Orders",
@@ -154,12 +146,11 @@ inner_join(order_rel_abund_mean, order_pool_mean, by="taxon") %>%
                              "Propionibacteriales", "Acidimicrobiales", "Micrococcales", "Unclassified Actinobacteria", "Unclassified Thermoleophilia", "Sphingomonadales", "Myxococcales", 
                              "**Burkholderiales (Off)***", "Geodermatophilales", "**Streptomycetales (In)***", "Acidobacteria Gp16 incertae sedis", "**Pseudonocardiales (In)***", 
                              "**Acidobacteria Gp3 incertae sedis (In)***", "**Unclassified Bacteria (In)***", "Other"),
-                    #values = c(brewer.pal(12, "Paired"), "navyblue", "dimgrey")) +
-                    values = c(moma.colors("Warhol", 24, direction=1, type="continuous"), "dimgrey")) +  #type could be continuous
+                    values = c(moma.colors("Warhol", 24, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("in live", "in dead", "in none", "off live", "off dead", "off none"),
                    labels=c("In-season<br>Live (n=12)", "In-season<br>Heat-killed<br>(n=6)", "In-season<br>Bulk (n=4)",
                             "Off-season<br>Live (n=12)", "Off-season<br>Heat-killed<br>(n=6)", "Off-season<br>Bulk (n=4)")) +
-  scale_y_continuous(expand=c(0,0)) + #this makes the bars touch the y axis
+  scale_y_continuous(expand=c(0,0)) +
   labs(x=NULL,
        y="Average Relative Abundance (%)",
        title="Order-level Bacterial Alpha Diversity<br>In- and Off-season Stiles Farm") +
