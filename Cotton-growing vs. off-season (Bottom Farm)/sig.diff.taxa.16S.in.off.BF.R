@@ -15,7 +15,6 @@ shared <- read_tsv("final.opti_mcc.0.03.subsample.bacterial.BF.shared",
   mutate(otu = str_replace(string=otu,
                            pattern="otu",
                            replacement = "Otu"))
-#subset(count !="1" & count !="2" & count !="3" & count !="4" & count !="5" & count !="6" & count !="7" & count !="8" & count !="9")
 
 ##
 #genus-level
@@ -28,7 +27,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.bacterial.BF.taxonomy") %>%
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern='["]', replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
@@ -52,7 +50,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.bacterial.BF.taxonomy") %>%
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern='["]', replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
@@ -150,7 +147,7 @@ composite %>%
   scale_x_log10() +
   scale_color_manual(NULL,
                      breaks = c("in live", "off live"),
-                     values = c("#E97451", "#7393B3"), #BF color is hex code for burnt sienna (blue + orange), Stiles color is hex code for blue grey
+                     values = c("#E97451", "#7393B3"),
                      labels = c("In-season Live", "Off-season Live")) +
   scale_fill_manual(NULL,
                     breaks = c("in live", "off live"),
