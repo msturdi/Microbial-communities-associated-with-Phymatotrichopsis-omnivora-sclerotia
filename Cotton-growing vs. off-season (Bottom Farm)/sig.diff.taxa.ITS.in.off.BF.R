@@ -33,7 +33,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.fungal.BF.taxonomy") %>%
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
-         #for higher taxonomic levels (order and above)
          order=str_replace(order, "unclassified_(.*)", "Unclassified \\1"),
          order=str_replace(order, "(.*)_unclassified", "Unclassified \\1"),
          order=str_replace_all(order, "_", " "))%>%
@@ -114,7 +113,7 @@ composite %>%
   scale_x_log10() +
   scale_color_manual(NULL,
                      breaks = c("in live", "off live"),
-                     values = c("#E97451", "#7393B3"), #BF color is hex code for burnt sienna (blue + orange), Stiles color is hex code for blue grey
+                     values = c("#E97451", "#7393B3"),
                      labels = c("In-season Live", "Off-season Live")) +
   scale_fill_manual(NULL,
                     breaks = c("in live", "off live"),
