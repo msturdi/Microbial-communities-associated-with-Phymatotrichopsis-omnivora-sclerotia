@@ -1,6 +1,5 @@
 library(tidyverse)
 library(readxl)
-library(RColorBrewer)
 library(vegan)
 library(glue)
 library(ggtext)
@@ -12,8 +11,6 @@ nmds <- read_tsv(file="final.opti_mcc.braycurtis.0.03.lt.ave.oct.24.fungal.nmds.
 
 metadata_nmds <- inner_join(metadata, nmds, by=c('sample'='group'))
 
-#NMDS projection with ellipses
-#metadata_nmds$combo = factor(metadata_nmds$combo, levels = c("BF live", "Stiles live", "BF dead", "Stiles dead", "BF none", "Stiles none"), ordered = TRUE)
 ggplot(metadata_nmds, aes(x=axis1, axis2, color=combo)) +
   stat_ellipse(aes(x=axis1, axis2, fill=combo),
                geom="polygon", level=0.75,
