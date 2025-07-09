@@ -115,7 +115,6 @@ sig_taxa <- composite %>%
   mutate(test = map(.x=data, ~pairwise.wilcox.test(x=.x$rel_abund, g=.x$trt, p.adjust.method = "BH") %>% tidy())) %>%
   unnest(test) %>% 
   filter(p.value < 0.05) %>%
-  #select(genus, p.value) %>%
   ungroup()
 
 composite %>%
