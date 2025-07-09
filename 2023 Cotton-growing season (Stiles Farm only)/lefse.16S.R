@@ -29,7 +29,6 @@ shared_file <- read_tsv("final.opti_mcc.0.03.subsample.shared")
 
 shared_design <- inner_join(shared_file, metadata, by=c("Group"="sample"))
 
-#creating new directory in my 16S folder
 dir.create("processed_data/")
 
 run_lefse <- function(x, y, tag){
@@ -60,7 +59,7 @@ read_tsv("processed_data/sclerotia.live_dead.0.03.lefse_summary")
 
 read_tsv(live_dead) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   mutate(LDA = if_else(Class == "live", -1 * LDA, LDA),
          taxon = fct_reorder(taxon, LDA)) %>%
@@ -84,8 +83,7 @@ read_tsv("processed_data/sclerotia.live_none.0.03.lefse_summary")
 
 read_tsv(live_none) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
-  #subset(OTU !="Otu0049") %>% #this is the otu that is NA in the figure
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   mutate(LDA = if_else(Class == "live", -1 * LDA, LDA),
          taxon = fct_reorder(taxon, LDA)) %>%
@@ -109,7 +107,7 @@ read_tsv("processed_data/sclerotia.dead_none.0.03.lefse_summary")
 
 read_tsv(dead_none) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   mutate(LDA = if_else(Class == "dead", -1 * LDA, LDA),
          taxon = fct_reorder(taxon, LDA)) %>%
