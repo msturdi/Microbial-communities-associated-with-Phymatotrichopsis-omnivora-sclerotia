@@ -16,7 +16,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.mar.24.bact.taxonomy") %>%
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern='["]', replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #subset(genus !="NA") %>%
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
@@ -35,8 +34,7 @@ shared_file <- read_tsv("final.opti_mcc.0.03.subsample.mar.24.bact.shared")
 #for location comparison
 
 metadata <- read_excel("mar.24.bact.metadata.xlsx") %>%
-  select(sample, location) #lefse only wants 2 columns, the sample and then the variable you want to investigate
-#can switch it out for whatever column I want to look at
+  select(sample, location)
 
 shared_design <- inner_join(shared_file, metadata, by=c("Group"="sample"))
 
@@ -64,11 +62,9 @@ bf_stiles <- run_lefse_location("BF", "Stiles", "bf_stiles")
 #for BF-Stiles comparison
 read_tsv(bf_stiles) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
-  #mutate(LDA = if_else(Class == "BF", -1 * LDA, LDA),
-  #taxon = fct_reorder(taxon, LDA)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
   geom_col() +
   labs(y=NULL, x="LDA Score(log 10)",
@@ -96,8 +92,7 @@ metadata <- read_excel("mar.24.bact.metadata.xlsx") %>%
   mutate(combo = str_replace_all(string=combo, pattern="Stiles live", replacement="slive")) %>%
   mutate(combo = str_replace_all(string=combo, pattern="Stiles dead", replacement="sdead")) %>%
   mutate(combo = str_replace_all(string=combo, pattern="Stiles none", replacement="snone")) %>%
-  select(sample, combo) #lefse only wants 2 columns, the sample and then the variable you want to investigate
-#can switch it out for whatever column I want to look at
+  select(sample, combo)
 
 shared_design <- inner_join(shared_file, metadata, by=c("Group"="sample"))
 
@@ -152,7 +147,7 @@ ggsave("lefse.blive.bnone.16S.png", width=10, height=8)
 #for BF dead - BF none comparison
 read_tsv(bdead_bnone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -174,7 +169,7 @@ ggsave("lefse.bdead.bnone.16S.png", width=9, height=7)
 #for Stiles live - Stiles none comparison
 read_tsv(slive_snone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -196,7 +191,7 @@ ggsave("lefse.slive.snone.16S.png", width=12, height=22)
 #for Stiles dead - Stiles none comparison
 read_tsv(sdead_snone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -218,7 +213,7 @@ ggsave("lefse.sdead.snone.16S.png", width=12, height=22)
 #for BF live - Stiles live comparison
 read_tsv(blive_slive) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -240,7 +235,7 @@ ggsave("lefse.blive.slive.16S.png", width=12, height=22)
 #for BF dead - Stiles dead comparison
 read_tsv(bdead_sdead) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
