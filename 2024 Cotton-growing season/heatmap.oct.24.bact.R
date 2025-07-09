@@ -1,13 +1,9 @@
 library(tidyverse)
 library(readxl)
 library(ggtext)
-library(RColorBrewer)
-library(MoMAColors)
 library(glue)
 library(dplyr)
 library(scales)
-
-display.all.moma(24, colorblind_only=F)
 
 metadata <- read_excel("oct.24.16S.metadata.xlsx") %>%
   mutate(combo = glue("{location} {treatment}"))
@@ -16,21 +12,6 @@ shared <- read_tsv("final.opti_mcc.0.03.subsample.oct.24.bacterial.shared",
                    col_types = cols(Group = col_character(),
                                     .default = col_double()))
 
-meta_cols <- c("label", "Group", "numOtus") #define columns to keep from shared file
-otu_sums <- colSums(shared[, !(names(shared) %in% meta_cols)]) #sum OTU abundances across all samples
-otus_to_keep <- names(otu_sums[otu_sums > 1]) #keep OTUs with total counts above 1
-
-shared_filtered <- shared %>%
-  select(all_of(meta_cols), all_of(otus_to_keep))
-
-otu_counts <- shared_filtered %>%
-  select(Group, starts_with("Otu")) %>%
-  rename(sample = Group) %>%
-  pivot_longer(-sample, names_to="otu", values_to = "count")
-
-##
-#no filtering of OTUs
-##
 otu_counts <- read_tsv("final.opti_mcc.0.03.subsample.oct.24.bacterial.shared") %>%
   select(Group, starts_with("Otu")) %>%
   rename(sample = Group) %>%
