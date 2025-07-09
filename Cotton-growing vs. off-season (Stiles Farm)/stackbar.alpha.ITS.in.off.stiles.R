@@ -1,7 +1,6 @@
 library(tidyverse)
 library(readxl)
 library(ggtext)
-library(RColorBrewer)
 library(MoMAColors)
 library(glue)
 library(dplyr)
@@ -92,7 +91,7 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=sample, y=rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Orders",
@@ -100,10 +99,7 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
                              "Unclassified Sordariomycetes", "Sordariomycetes order Incertae sedis", "Eurotiales", "Other"),
                     labels=c("Hypocreales", "Pleosporales", "Sordariales", "Capnodiales", "Unclassified Fungi", "Botryosphaeriales", "Xylariales", "Unclassified Ascomycota", 
                              "Unclassified Sordariomycetes", "Sordariomycetes order Incertae sedis", "Eurotiales", "Other"),
-                    #labels=c("**Hypocreales (Off)***", "**Pleosporales (Off)***", "Sordariales", "**Capnodiales (Off)***", "**Unclassified Fungi (Off)***", "Botryosphaeriales", 
-                             #"**Xylariales (Off)***", "Unclassified Ascomycota", "**Unclassified Sordariomycetes (In)***", "**Sordariomycetes order Incertae sedis (Off)***", 
-                             #"**Eurotiales (In)***", "Other"),
-                    values = c(moma.colors("Klein", 11, direction=1, type="continuous"), "dimgrey")) + #type could be continuous
+                    values = c(moma.colors("Klein", 11, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("SI1A1F", "SI1A2F", "SI1B1F", "SI1B2F", "SI2A1F", "SI2A2F", "SI2B1F", "SI2B2F", "SI3A1F", "SI3A2F", "SI3B1F", "SI3B2F",
                             "SI1C1F", "SI1C2F", "SI2C1F", "SI2C2F", "SI3C1F", "SI3C2F",
                             "SIBA1F", "SIBA2F", "SIBB1F", "SIBB2F",
@@ -124,14 +120,12 @@ inner_join(order_rel_abund, order_pool, by="taxon") %>%
   labs(x=NULL,
        y="Relative Abundance (%)",
        title="Order-level Fungal Alpha Diversity: Off-season vs. 2024 Cotton-growing Season<br>**Stiles Farm**") +
-  #labs(caption = "Other = relative abundance < 2.5%") +
   theme_classic() +
   theme(axis.text.x = element_markdown(),
         legend.text = element_markdown(),
         legend.title = element_text(size=10),
         legend.key.size = unit(10, "pt"),
         legend.position = "bottom",
-        #plot.caption = element_text(hjust=0.8, size=8),
         plot.title = element_markdown(hjust=0.5))
 
 ggsave("order.stackedbar.ITS.in.off.stiles.png", width=22, height=9)
@@ -145,7 +139,7 @@ inner_join(order_rel_abund_mean, order_pool_mean, by="taxon") %>%
             .groups="drop") %>%
   mutate(taxon = factor(taxon),
          taxon = fct_reorder(taxon, mean, .desc=TRUE),
-         taxon = fct_shift(taxon, n=1)) %>% #all of this mutate step is creating an "anchor" at the top and the bottom of the figure using the 2 most abundant phyla
+         taxon = fct_shift(taxon, n=1)) %>%
   ggplot(aes(x=combo, y=mean_rel_abund, fill=taxon)) +
   geom_col() +
   scale_fill_manual(name="Orders",
@@ -154,11 +148,11 @@ inner_join(order_rel_abund_mean, order_pool_mean, by="taxon") %>%
                     labels=c("**Hypocreales (Off)***", "**Pleosporales (Off)***", "Sordariales", "**Capnodiales (Off)***", "**Unclassified Fungi (Off)***", "Botryosphaeriales", 
                              "**Xylariales (Off)***", "Unclassified Ascomycota", "**Unclassified Sordariomycetes (In)***", "**Sordariomycetes order Incertae sedis (Off)***", 
                              "**Eurotiales (In)***", "Other"),
-                    values = c(moma.colors("Warhol", 11, direction=1, type="continuous"), "dimgrey")) +  #type could be continuous
+                    values = c(moma.colors("Warhol", 11, direction=1, type="continuous"), "dimgrey")) +
   scale_x_discrete(limits=c("in live", "in dead", "in none", "off live", "off dead", "off none"),
                    labels=c("In-season<br>Live (n=12)", "In-season<br>Heat-killed<br>(n=6)", "In-season<br>Bulk (n=4)",
                             "Off-season<br>Live (n=12)", "Off-season<br>Heat-killed<br>(n=6)", "Off-season<br>Bulk (n=4)")) +
-  scale_y_continuous(expand=c(0,0)) + #this makes the bars touch the y axis
+  scale_y_continuous(expand=c(0,0)) +
   labs(x=NULL,
        y="Average Relative Abundance (%)",
        title="Order-level Fungal Alpha Diversity<br>In- and Off-season Stiles Farm") +
