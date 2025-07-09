@@ -33,7 +33,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.oct.24.fungal.taxonomy") %>%
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern="s__", replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
@@ -42,10 +41,10 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.oct.24.fungal.taxonomy") %>%
                              replacement="*\\1*"),
          genus = str_replace(string=genus,
                              pattern="\\*(.*)_unclassified\\*",
-                             replacement="Unclassified \\1"), #fixes the unclassified where it comes after the taxa, can add asterisk to make italicized 
+                             replacement="Unclassified \\1"),
          genus = str_replace(string=genus,
                              pattern="\\*unclassified_(.*)\\*",
-                             replacement="Unclassified \\1"), #fixes the unclassified where is comes before the taxa, can add asterisk to make italicized
+                             replacement="Unclassified \\1"),
          genus = str_replace_all(genus, "_", " "),
          taxon = glue("{genus}<br>({pretty_otu})")) %>%
   select(otu, genus)
@@ -67,11 +66,9 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.oct.24.fungal.taxonomy") %>%
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern="s__", replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
-         #for higher taxonomic levels (order and above)
          order=str_replace(order, "unclassified_(.*)", "Unclassified \\1"),
          order=str_replace(order, "(.*)_unclassified", "Unclassified \\1"),
          order=str_replace_all(order, "_", " "))%>%
