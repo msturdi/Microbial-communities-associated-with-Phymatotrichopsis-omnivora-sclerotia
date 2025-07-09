@@ -15,7 +15,6 @@ shared <- read_tsv("final.opti_mcc.0.03.subsample.mar.24.bact.shared",
   mutate(otu = str_replace(string=otu,
                            pattern="otu",
                            replacement = "Otu"))
-  #subset(count !="1" & count !="2" & count !="3" & count !="4" & count !="5" & count !="6" & count !="7" & count !="8" & count !="9")
 
 ##
 #genus-level
@@ -77,7 +76,7 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.mar.24.bact.taxonomy") %>%
          class=str_replace(class, "unclassified_(.*)", "Unclassified \\1"),
          class=str_replace(class, "(.*)_unclassified", "Unclassified \\1"),
          class=str_replace_all(class, "_", " "))%>%
-  select(otu, class) #can swap in any taxonomic level, make sure to do it above too
+  select(otu, class)
 
 metadata <- read_excel("mar.24.bact.metadata.xlsx") %>%
   rename(group = sample) %>%
@@ -119,7 +118,6 @@ sig_taxa <- composite %>%
 composite %>%
   inner_join(sig_taxa, by="phylum") %>%
   mutate(rel_abund = 100 * (rel_abund + 1/20000),
-         #combo = factor(location, levels = c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"))) %>%
          location = factor(location, levels = c("BF", "Stiles"))) %>%
   ggplot(aes(x=rel_abund, y=phylum, color=location, fill=location)) +
   geom_jitter(position = position_jitterdodge(dodge.width = 0.8,
@@ -154,7 +152,6 @@ ggsave("sig.diff.phyla.16S.location.png", width=11, height=8)
 composite %>%
   inner_join(sig_taxa, by="class") %>%
   mutate(rel_abund = 100 * (rel_abund + 1/20000),
-         #combo = factor(location, levels = c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"))) %>%
          location = factor(location, levels = c("BF", "Stiles"))) %>%
   ggplot(aes(x=rel_abund, y=class, color=location, fill=location)) +
   geom_jitter(position = position_jitterdodge(dodge.width = 0.8,
@@ -239,7 +236,7 @@ composite %>%
   scale_x_log10() +
   scale_color_manual(NULL,
                      breaks = c("BF live", "Stiles live"),
-                     values = c("#E97451", "#7393B3"), #BF color is hex code for burnt sienna (blue + orange), Stiles color is hex code for blue grey
+                     values = c("#E97451", "#7393B3"),
                      labels = c("Bottom Farm Live", "Stiles Farm Live")) +
   scale_fill_manual(NULL,
                     breaks = c("BF live", "Stiles live"),
@@ -255,13 +252,3 @@ composite %>%
         plot.title = element_markdown(hjust=0.5))
 
 ggsave("sig.diff.orders.16S.blive.slive.png", width=12, height=12)
-
-
-#taxonomy mutation for family or genus level
-#genus = str_replace(string=genus,
-                    #pattern="(.*)",
-                    #replacement="*\\1*"),
-#genus = str_replace(string=genus,
-                    #pattern="\\*(.*)_unclassified\\*",
-                    #replacement="Unclassified<br>*\\1*"),
-#taxon = glue("{genus}<br>({pretty_otu})"))
