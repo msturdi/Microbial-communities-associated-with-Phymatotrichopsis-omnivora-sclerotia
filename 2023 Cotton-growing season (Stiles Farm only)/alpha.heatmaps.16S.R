@@ -1,12 +1,8 @@
 library(tidyverse)
 library(readxl)
 library(ggtext)
-library(RColorBrewer)
-library(MoMAColors)
 library(glue)
 library(dplyr)
-
-display.all.moma(11, colorblind_only=F)
 
 metadata <- read_excel("16S.2023.metadata.xlsx")
 
@@ -39,7 +35,6 @@ otu_rel_abund <- inner_join(metadata, otu_counts, by="sample") %>%
                                "none")))
 
 #order-level heat map
-#seems like this is the best taxonomic level to make this figure at
 order_rel_abund <- otu_rel_abund %>%
   filter(level=="order") %>%
   group_by(trt, sample, taxon) %>%
@@ -51,7 +46,7 @@ order_rel_abund <- otu_rel_abund %>%
          taxon = str_replace(taxon,
                              "^(\\S*)$", "*\\1*"),
          taxon = str_replace_all(taxon, 
-                                 "_", " ")) #gets ride of _ in taxon names
+                                 "_", " "))
 
 order_rel_abund %>%
   group_by(taxon) %>%
