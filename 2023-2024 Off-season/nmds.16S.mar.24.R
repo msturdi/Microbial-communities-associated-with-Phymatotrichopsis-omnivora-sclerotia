@@ -1,6 +1,5 @@
 library(tidyverse)
 library(readxl)
-library(RColorBrewer)
 library(vegan)
 library(glue)
 library(ggtext)
@@ -13,7 +12,6 @@ nmds <- read_tsv(file="final.opti_mcc.braycurtis.0.03.lt.ave.mar.24.bact.nmds.ax
 metadata_nmds <- inner_join(metadata, nmds, by=c('sample'='group'))
 
 #NMDS projection with ellipses
-#BF is at the top of the figure, Stiles is at the bottom
 nmds <- ggplot(metadata_nmds, aes(x=axis1, axis2, color=treatment)) +
   stat_ellipse(aes(x=axis1, axis2, fill=combo),
                geom="polygon", level=0.75,
@@ -34,9 +32,6 @@ nmds <- ggplot(metadata_nmds, aes(x=axis1, axis2, color=treatment)) +
   theme(legend.key.size = unit(1, "cm"),
         legend.text = element_markdown(size=9.5),
         legend.position = "bottom",
-        #legend.position = c(1, 0.55),
-        #legend.background = element_rect(fill="NA", color="black"),
-        #legend.margin = margin(t=-2, r=3, b=1, l=2),
         plot.title = element_markdown(hjust=0.5, size=12, vjust=2)) 
 
 nmds +
