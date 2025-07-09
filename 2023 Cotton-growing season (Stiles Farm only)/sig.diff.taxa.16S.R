@@ -27,7 +27,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.taxonomy") %>%
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern='["]', replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
