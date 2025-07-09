@@ -16,7 +16,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.bacterial.BF.taxonomy") %>%
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern='["]', replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #subset(genus !="NA") %>%
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
@@ -35,8 +34,7 @@ shared_file <- read_tsv("final.opti_mcc.0.03.subsample.bacterial.BF.shared")
 #for season comparison
 
 metadata <- read_excel("metadata.in.off.24.16S.BF.xlsx") %>%
-  select(sample, season) #lefse only wants 2 columns, the sample and then the variable you want to investigate
-#can switch it out for whatever column I want to look at
+  select(sample, season)
 
 shared_design <- inner_join(shared_file, metadata, by=c("Group"="sample"))
 
@@ -64,7 +62,7 @@ in_off <- run_lefse_season("in", "off", "in_off")
 #for in-off comparison
 read_tsv(in_off) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -83,7 +81,6 @@ read_tsv(in_off) %>%
 
 ggsave("lefse.in.off.16S.season.BF.png", width=12, height=22)
 
-
 #for treatment comparison
 
 metadata <- read_excel("metadata.in.off.24.16S.BF.xlsx") %>%
@@ -94,8 +91,7 @@ metadata <- read_excel("metadata.in.off.24.16S.BF.xlsx") %>%
   mutate(combo = str_replace_all(string=combo, pattern="off live", replacement="olive")) %>%
   mutate(combo = str_replace_all(string=combo, pattern="off dead", replacement="odead")) %>%
   mutate(combo = str_replace_all(string=combo, pattern="off none", replacement="onone")) %>%
-  select(sample, combo) #lefse only wants 2 columns, the sample and then the variable you want to investigate
-#can switch it out for whatever column I want to look at
+  select(sample, combo)
 
 shared_design <- inner_join(shared_file, metadata, by=c("Group"="sample"))
 
@@ -128,7 +124,7 @@ idead_odead <- run_lefse_trt("idead", "odead", "idead_odead")
 #for in-season live - in-season none comparison
 read_tsv(ilive_inone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -150,7 +146,7 @@ ggsave("lefse.ilive.inone.16S.BF.png", width=10, height=8)
 #for in-season dead - in-season none comparison
 read_tsv(idead_inone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -173,7 +169,7 @@ ggsave("lefse.idead.inone.16S.BF.png", width=10, height=8)
 #for off-season live - off-season none comparison
 read_tsv(olive_onone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -196,7 +192,7 @@ ggsave("lefse.olive.onone.16S.BF.png", width=12, height=15)
 #for off-season dead - off-season none comparison
 read_tsv(odead_onone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -218,9 +214,9 @@ ggsave("lefse.odead.onone.16S.BF.png", width=12, height=12)
 #for in-season live - off-season live comparison
 read_tsv(ilive_olive) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>% 
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
-  filter(!grepl("Unclassified", taxon)) %>% #dplyr library, 'grepl' matches a pattern within a string, getting rid of all instances of a word in a column, no matter what comes after it
+  filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
   geom_col() +
   labs(y=NULL, x="LDA Score(log 10)",
@@ -240,9 +236,9 @@ ggsave("lefse.ilive.olive.16S.BF.png", width=12, height=22)
 #for in-season dead - off-season dead comparison
 read_tsv(idead_odead) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
-  filter(!grepl("Unclassified", taxon)) %>% #dplyr library, 'grepl' matches a pattern within a string, getting rid of all instances of a word in a column, no matter what comes after it
+  filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
   geom_col() +
   labs(y=NULL, x="LDA Score(log 10)",
