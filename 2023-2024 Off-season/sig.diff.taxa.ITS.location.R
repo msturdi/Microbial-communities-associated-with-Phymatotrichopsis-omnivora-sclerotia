@@ -30,26 +30,13 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.mar.24.fungal.taxonomy") %>%
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern="s__", replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
-         #genus = str_replace(string=genus,
-                             #pattern="(.*)",
-                             #replacement="*\\1*"),
-         #genus = str_replace(string=genus,
-                             #pattern="\\*(.*)_unclassified\\*",
-                             #replacement="Unclassified \\1"), #fixes the unclassified where it comes after the taxa, can add asterisk to make italicized 
-         #genus = str_replace(string=genus,
-                              #pattern="\\*unclassified_(.*)\\*",
-                              #replacement="Unclassified \\1"), #fixes the unclassified where is comes before the taxa, can add asterisk to make italicized
-         #genus = str_replace_all(genus, "_", " "),
-         #taxon = glue("{genus}<br>({pretty_otu})")) %>%
-  #for higher taxonomic levels (order and above)
          order=str_replace(order, "unclassified_(.*)", "Unclassified \\1"),
          order=str_replace(order, "(.*)_unclassified", "Unclassified \\1"),
          order=str_replace_all(order, "_", " "))%>%
-  select(otu, genus) #can swap in any taxonomic level, make sure to do it above too
+  select(otu, genus) #swap for any taxonomic level
 
 metadata <- read_excel("mar.24.fungal.metadata.xlsx") %>%
   rename(group = sample) %>%
@@ -248,13 +235,3 @@ composite %>%
         plot.title = element_text(hjust=0.5))
 
 ggsave("sig.diff.orders.blive.slive.ITS.png", width=11, height=8)
-
-
-#taxonomy mutation for family or genus level
-#genus = str_replace(string=genus,
-#pattern="(.*)",
-#replacement="*\\1*"),
-#genus = str_replace(string=genus,
-#pattern="\\*(.*)_unclassified\\*",
-#replacement="Unclassified<br>*\\1*"),
-#taxon = glue("{genus}<br>({pretty_otu})"))
