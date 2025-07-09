@@ -78,10 +78,6 @@ shannon_summary_location <- meta_alpha %>%
             N = n(),
             .groups = "drop")
 
-#a way to make a bar plot with error bars without needing to have preceding summary steps
-#stat_summary(fun.data = mean_se, geom="errorbar", width=0.5) +
-#stat_summary(fun.data = mean_se, geom="bar", show.legend = FALSE)
-
 #just location Shannon
 location_shannon <- meta_alpha %>%
   ggplot(aes(x=location, y=shannon, color=location)) +
@@ -98,7 +94,6 @@ location_shannon <- meta_alpha %>%
                     labels=c("Bottom Farm", "Stiles Farm")) +
   scale_x_discrete(limits=c("BF", "Stiles"),
                    labels=c("Bottom Farm<br>(Non-conducive)", "Stiles Farm<br>(Conducive)")) +
-  #scale_y_continuous(limits=c(6.5,7)) +
   labs(x=NULL,
        y="Bacterial Shannon Diversity",
        title="Cotton-growing Season Bacterial Diversity") +
