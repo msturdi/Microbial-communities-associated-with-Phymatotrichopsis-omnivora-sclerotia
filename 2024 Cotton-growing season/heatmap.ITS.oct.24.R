@@ -1,8 +1,6 @@
 library(tidyverse)
 library(readxl)
 library(ggtext)
-library(RColorBrewer)
-library(MoMAColors)
 library(glue)
 library(scales)
 
