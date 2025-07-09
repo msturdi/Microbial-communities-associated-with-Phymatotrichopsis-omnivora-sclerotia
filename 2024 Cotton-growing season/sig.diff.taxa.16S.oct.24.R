@@ -8,20 +8,7 @@ set.seed(19980609)
 
 shared <- read_tsv("final.opti_mcc.0.03.subsample.oct.24.bacterial.shared",
                    col_types = cols(Group = col_character(),
-                                    .default = col_double())) #comment everything after this line out if filtering
-  #rename_all(tolower) %>%
-  #select(group, starts_with("otu")) %>%
-  #pivot_longer(-group, names_to="otu", values_to="count") %>%
-  #mutate(otu = str_replace(string=otu,
-                           #pattern="otu",
-                           #replacement = "Otu"))
-
-meta_cols <- c("label", "Group", "numOtus") #define columns to keep from shared file
-otu_sums <- colSums(shared[, !(names(shared) %in% meta_cols)]) #sum OTU abundances across all samples
-otus_to_keep <- names(otu_sums[otu_sums > 1]) #keep OTUs with total counts above 1
-
-shared_filtered <- shared %>%
-  select(all_of(meta_cols), all_of(otus_to_keep)) %>%
+                                    .default = col_double())) %>%
   rename_all(tolower) %>%
   select(group, starts_with("otu")) %>%
   pivot_longer(-group, names_to="otu", values_to="count") %>%
@@ -40,7 +27,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.oct.24.bacterial.taxonomy") 
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern='["]', replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
@@ -64,7 +50,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.oct.24.bacterial.taxonomy") 
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern='["]', replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
@@ -84,7 +69,6 @@ taxonomy <- read_tsv(file="final.opti_mcc.0.03.cons.oct.24.bacterial.taxonomy") 
   mutate(taxonomy=str_replace_all(string=taxonomy, pattern='["]', replacement="")) %>%
   separate(taxonomy, into=c("kingdom", "phylum", "class", "order", "family", "genus"), 
            sep=";") %>%
-  #mutation code for family or genus level below
   mutate(pretty_otu = str_replace(string=otu,
                                   pattern="tu0*",
                                   replacement = "TU "),
@@ -253,7 +237,7 @@ composite %>%
   scale_x_log10() +
   scale_color_manual(NULL,
                      breaks = c("BF live", "Stiles live"),
-                     values = c("#E97451", "#7393B3"), #BF color is hex code for burnt sienna (blue + orange), Stiles color is hex code for blue grey
+                     values = c("#E97451", "#7393B3"),
                      labels = c("Bottom Farm Live", "Stiles Farm Live")) +
   scale_fill_manual(NULL,
                     breaks = c("BF live", "Stiles live"),
@@ -277,7 +261,7 @@ ggsave("sig.diff.orders.16S.blive.slive.png", width=12, height=12)
 metadata <- read_excel("oct.24.16S.metadata.xlsx") %>%
   rename(group = sample) %>%
   mutate(combo = glue("{location} {treatment}")) %>%
-  subset(location !="Stiles") #want to look at each location separately for sclerotia treatment
+  subset(location !="Stiles")
 
 composite <- inner_join(shared, taxonomy, by="otu") %>%
   group_by(group, order) %>%
@@ -363,14 +347,3 @@ composite %>%
         legend.text = element_markdown(size=10),
         legend.key.size = unit(15, "pt"),
         plot.title = element_text(hjust=0.5))
-
-##
-#taxonomy mutation for family or genus level
-##
-#genus = str_replace(string=genus,
-                    #pattern="(.*)",
-                    #replacement="*\\1*"),
-#genus = str_replace(string=genus,
-                    #pattern="\\*(.*)_unclassified\\*",
-                    #replacement="Unclassified<br>*\\1*"),
-#taxon = glue("{genus}<br>({pretty_otu})"))
