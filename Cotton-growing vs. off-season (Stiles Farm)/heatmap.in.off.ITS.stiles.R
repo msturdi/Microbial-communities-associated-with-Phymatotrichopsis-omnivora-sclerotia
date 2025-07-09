@@ -1,13 +1,9 @@
 library(tidyverse)
 library(readxl)
 library(ggtext)
-library(RColorBrewer)
-library(MoMAColors)
 library(glue)
 library(dplyr)
 library(scales)
-
-display.all.moma(24, colorblind_only=F)
 
 metadata <- read_excel("metadata.ITS.in.off.stiles.xlsx") %>%
   mutate(combo = glue("{season} {treatment}"))
@@ -77,7 +73,7 @@ order_rel_abund_mean %>%
   scale_fill_gradient(low="white", high="red",
                       name=("Relative<br>Abundance (%)"),
                       limits=c(0,50), 
-                      oob=squish, #part of "scales" library
+                      oob=squish,
                       breaks = c(0, 10, 20, 30, 40, 50), labels = c("0", "10", "20", "30", "40", ">50")) + 
   coord_fixed() +
   scale_x_discrete(limits=c("in live", "in dead", "in none", "off live", "off dead", "off none"),
