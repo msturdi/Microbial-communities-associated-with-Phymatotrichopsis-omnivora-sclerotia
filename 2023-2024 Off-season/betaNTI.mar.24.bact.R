@@ -9,8 +9,6 @@ library(file2meco)
 library(dplyr)
 library(metagenomeSeq)
 library(iCAMP)
-library(MoMAColors)
-library(ggtext)
 
 set.seed(19980609)
 
@@ -140,24 +138,3 @@ beta_NTI_ave <- read.csv("group.distance.mar.24.csv") %>%
             min = mean-se,
             N = n(),
             .groups = "drop")
-
-g2 = g1 +
-  scale_color_manual(name=NULL,
-                     breaks=c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"),
-                     labels=c("BF live<br>sclerotia", "BF heat-killed<br>sclerotia", "BF bulk", 
-                              "SF live<br>sclerotia", "SF heat-killed<br>sclerotia", "SF bulk"),
-                     values = c(moma.colors("Sidhu", 6, direction=1, type="discrete"))) +
-  scale_x_discrete(limits=c("BF live", "BF dead", "BF none", "Stiles live", "Stiles dead", "Stiles none"),
-                   labels=c("BF live<br>sclerotia", "BF heat-killed<br>sclerotia", "BF bulk", 
-                            "SF live<br>sclerotia", "SF heat-killed<br>sclerotia", "SF bulk")) +
-  labs(x=NULL,
-       y="betaNTI",
-       title="Stochastic or Deterministic Selection<br>Off-season 2023-24 **Bacterial**") +
-  theme_classic() +
-  theme(axis.text.x = element_markdown(size = 14, color = "black"),
-        axis.text.y = element_markdown(size = 12),
-        axis.title.y = element_markdown(size = 14),
-        legend.position = "none",
-        plot.title = element_markdown(hjust=0.5, size = 16))
-
-ggsave("betaNTI.mar24.16S.png", width=12, height=8)
