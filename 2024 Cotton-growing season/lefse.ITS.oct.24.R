@@ -42,8 +42,7 @@ shared_file <- read_tsv("final.opti_mcc.0.03.subsample.oct.24.fungal.shared")
 #for location comparison
 
 metadata <- read_excel("oct.24.ITS.metadata.xlsx") %>%
-  select(sample, location) #lefse only wants 2 columns, the sample and then the variable you want to investigate
-#can switch it out for whatever column I want to look at
+  select(sample, location)
 
 shared_design <- inner_join(shared_file, metadata, by=c("Group"="sample"))
 
@@ -71,7 +70,7 @@ bf_stiles <- run_lefse_location("BF", "Stiles", "bf_stiles")
 #for BF-Stiles comparison
 read_tsv(bf_stiles) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -103,8 +102,7 @@ metadata <- read_excel("oct.24.ITS.metadata.xlsx") %>%
   mutate(combo = str_replace_all(string=combo, pattern="Stiles live", replacement="slive")) %>%
   mutate(combo = str_replace_all(string=combo, pattern="Stiles dead", replacement="sdead")) %>%
   mutate(combo = str_replace_all(string=combo, pattern="Stiles none", replacement="snone")) %>%
-  select(sample, combo) #lefse only wants 2 columns, the sample and then the variable you want to investigate
-#can switch it out for whatever column I want to look at
+  select(sample, combo)
 
 shared_design <- inner_join(shared_file, metadata, by=c("Group"="sample"))
 
@@ -137,7 +135,7 @@ bdead_sdead <- run_lefse_trt("bdead", "sdead", "bdead_sdead")
 #for BF live - BF none comparison
 read_tsv(blive_bnone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -159,7 +157,7 @@ ggsave("lefse.blive.bnone.ITS.png", width=8, height=8)
 #for BF dead - BF none comparison
 read_tsv(bdead_bnone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -181,7 +179,7 @@ ggsave("lefse.bdead.bnone.ITS.png", width=9, height=7)
 #for Stiles live - Stiles none comparison
 read_tsv(slive_snone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -203,7 +201,7 @@ ggsave("lefse.slive.snone.ITS.png", width=9, height=8)
 #for Stiles dead - Stiles none comparison
 read_tsv(sdead_snone) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -225,7 +223,7 @@ ggsave("lefse.sdead.snone.ITS.png", width=9, height=7)
 #for BF live - Stiles live comparison
 read_tsv(blive_slive) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
@@ -247,7 +245,7 @@ ggsave("lefse.blive.slive.ITS.png", width=9, height=11)
 #for BF dead - Stiles dead comparison
 read_tsv(bdead_sdead) %>%
   drop_na(LDA) %>%
-  filter(LDA > 2.5) %>% #filter out the otus that have a smaller effect size
+  filter(LDA > 2.5) %>%
   inner_join(., taxonomy, by=c("OTU" = "otu")) %>%
   filter(!grepl("Unclassified", taxon)) %>%
   ggplot(aes(x=LDA, y=taxon, fill=Class)) +
