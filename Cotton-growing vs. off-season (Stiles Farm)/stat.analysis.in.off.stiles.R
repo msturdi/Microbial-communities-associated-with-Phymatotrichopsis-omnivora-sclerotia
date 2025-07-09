@@ -70,10 +70,6 @@ shannon_summary_season <- meta_alpha %>%
             N = n(),
             .groups = "drop")
 
-#a way to make a bar plot with error bars without needing to have preceeding summary steps
-#stat_summary(fun.data = mean_se, geom="errorbar", width=0.5) +
-#stat_summary(fun.data = mean_se, geom="bar", show.legend = FALSE)
-
 #season only
 meta_alpha %>%
   ggplot(aes(x=season, y=shannon, color=season)) +
